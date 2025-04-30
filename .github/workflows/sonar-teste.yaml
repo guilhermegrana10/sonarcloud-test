@@ -37,5 +37,4 @@ jobs:
           sudo apt install curl zip -y
           sudo curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006.zip
           unzip sonar-scanner.zip
-          ./sonar-scanner-*/bin/sonar-scanner \
-            -Dsonar.login=$SONAR_TOKEN
+          sudo ./sonar-scanner-*/bin/sonar-scanner -Dsonar.login=$SONAR_TOKEN
