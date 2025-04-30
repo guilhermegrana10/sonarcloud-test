@@ -17,23 +17,25 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: Set up Java (necessário para rodar o scanner)
-        uses: actions/setup-java@v4
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          node-version: '20'
 
-      - name: Cache SonarQube packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
+      - name: Atualizar repositório
+        run: | 
+         sudo apt update
 
-      - name: Run SonarQube Scanner
+      - name: Instalar dependências do projeto
+        run: |
+         sudo apt install nodejs -y
+
+      - name: Baixar e executar o SonarQube Scanner
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006.zip
+          sudo apt install curl zip -y
+          sudo curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006.zip
           unzip sonar-scanner.zip
           ./sonar-scanner-*/bin/sonar-scanner \
             -Dsonar.login=$SONAR_TOKEN
