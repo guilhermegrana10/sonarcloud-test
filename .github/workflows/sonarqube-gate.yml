@@ -1,4 +1,4 @@
-name: Validate SonarQube Quality Gate
+name: SonarQube Quality Gate Validation
 
 on:
   push:
@@ -9,23 +9,19 @@ on:
       - main
 
 jobs:
-  sonarqube:
-    name: Analyze and validate quality gate
+  sonarqube-analysis:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
 
-      - name: Instalar Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Instalar dependências
-        run: npm install
-
-      - name: Rodar análise no SonarQube
+      - name: Rodar Sonar Scanner (sem npm install)
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
