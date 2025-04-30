@@ -22,7 +22,7 @@ jobs:
           node-version: '20'
 
       - name: Instalar dependências do projeto
-        run: npm install
+        run: sudo apt install nodejs -y
 
       - uses: SonarSource/sonarqube-scan-action@v5
         env:
