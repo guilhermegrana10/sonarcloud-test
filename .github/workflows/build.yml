@@ -24,7 +24,7 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} # variável de ambiente do sonar - URL do Sonar
         with:
           args: >
-            -Dsonar.projectKey=istic-sp_2025-honda-plataforma-backjava-frontreact_a4e5a904-b2d1-4322-8b97-15acd1ec683a
+            -Dsonar.projectKey=guilhermegrana10_sonarcloud-test_3539ba55-579e-480c-b079-702994a496ca
             -Dsonar.sources=.
             -Dsonar.exclusions=**/*.java
 
