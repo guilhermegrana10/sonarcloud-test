@@ -1,36 +1,37 @@
-name: SonarQube Quality Gate Validation
+name: Build
 
 on:
   push:
     branches:
-      - main
-  pull_request:
-    branches:
-      - main
+      - dev
 
 jobs:
-  sonarqube-analysis:
+  build:
+    name: Build and analyze
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout do código
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      # Baixa o código-fonte do repositório - clona o repositório completo
+      # Isso melhora a análise do SonarQube (que pode usar histórico Git para detectar mudanças).
+      - uses: actions/checkout@v4
         with:
-          node-version: '20'
+          fetch-depth: 0
 
-      - name: Rodar Sonar Scanner (sem npm install)
+      # Roda o scanner automaticamente usando a action oficial
+      - uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} # variável de ambiente do sonar - token de autenticação
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} # variável de ambiente do sonar - URL do Sonar
+        with:
+          args: >
+            -Dsonar.projectKey=istic-sp_2025-honda-plataforma-backjava-frontreact_a4e5a904-b2d1-4322-8b97-15acd1ec683a
+            -Dsonar.sources=.
+            -Dsonar.exclusions=**/*.java
+
+      # Verifica o resultado do Quality Gate - falha o job se estiver "FAILED"
+      - name: Verificar Quality Gate
+        uses: SonarSource/sonarqube-quality-gate-action@v1.1.0
+        timeout-minutes: 5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: |
-          curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006.zip
-          unzip sonar-scanner.zip
-          ./sonar-scanner-*/bin/sonar-scanner \
-            -Dsonar.projectKey=guilhermegrana10_sonarcloud-test_3539bab5-579e-480c-b079-70294a495caa \
-            -Dsonar.sources=. \
-            -Dsonar.host.url=$SONAR_HOST_URL \
-            -Dsonar.login=$SONAR_TOKEN \
-            -Dsonar.qualitygate.wait=true
