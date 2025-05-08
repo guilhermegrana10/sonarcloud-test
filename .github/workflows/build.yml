@@ -1,0 +1,37 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build and analyze
+    runs-on: ubuntu-latest
+
+    steps:
+      # Baixa o código-fonte do repositório - clona o repositório completo
+      # Isso melhora a análise do SonarQube (que pode usar histórico Git para detectar mudanças).
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Roda o scanner automaticamente usando a action oficial
+      - uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} # variável de ambiente do sonar - token de autenticação
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }} # variável de ambiente do sonar - URL do Sonar
+        with:
+          args: >
+            -Dsonar.projectKey=guilhermegrana10_sonarcloud-test_6c8a7b6d-afba-4332-9b36-e9651e32821e
+            -Dsonar.sources=.
+            -Dsonar.exclusions=**/*.java
+
+      # Verifica o resultado do Quality Gate - falha o job se estiver "FAILED"
+      - name: Verificar Quality Gate
+        uses: SonarSource/sonarqube-quality-gate-action@v1.1.0
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
